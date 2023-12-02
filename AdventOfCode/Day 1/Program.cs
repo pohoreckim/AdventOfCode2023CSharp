@@ -17,7 +17,6 @@ int Func(string s)
     return result;
 }
 
-//int result = 0;
 int result = Func(input);
 
 Console.WriteLine($"Part One answear: {result}");
