@@ -12,7 +12,7 @@ foreach (var line in input.Split('\n').SkipLast(1))
 
 // Part One
 
-hands.Sort(Hand.CompareHands);
+hands.Sort(Hand.ComparerFactory(false));
 ulong result = 0;
 for (int i = 0; i < hands.Count; i++)
 {
@@ -23,5 +23,10 @@ Console.WriteLine($"Part One answear: {result}");
 
 // Part Two
 
-
+hands.Sort(Hand.ComparerFactory(true));
+result = 0;
+for (int i = 0; i < hands.Count; i++)
+{
+    result += (ulong)((i + 1) * hands[i].Value);
+}
 Console.WriteLine($"Part Two answear: {result}");
