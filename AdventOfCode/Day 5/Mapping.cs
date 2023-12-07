@@ -18,11 +18,11 @@ namespace Day_5
         }
         public bool Intersects(Range range) 
         {
-            return range.Start <= (SourceRangeStart + RangeLength) && SourceRangeStart <= range.End;
+            return range.Start <= (SourceRangeStart + RangeLength - 1) && SourceRangeStart <= range.End;
         }
         public bool Includes(Range range) 
         {
-            return SourceRangeStart <= range.Start && range.End <= SourceRangeStart + RangeLength;
+            return SourceRangeStart <= range.Start && range.End <= SourceRangeStart + RangeLength - 1;
         }
         public Range MapRange(Range range) 
         {

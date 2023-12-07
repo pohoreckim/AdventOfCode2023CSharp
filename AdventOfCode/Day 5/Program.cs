@@ -78,13 +78,16 @@ for (int i = 0; i < seeds.Count; i += 2)
 int currentCategory = 0;
 while (currentCategory != destinationCategory) 
 {
+    List<Day_5.Range> results = new List<Day_5.Range>();
     var map = maps.Find(x => x.SourceCategory == currentCategory);
-    var k = map.GetRanges(ranges[0]);
+    foreach (var range in ranges)
+    {
+        results = results.Concat(map.GetRanges(range)).ToList();
+    }
     currentCategory = map.DestinationCategory;
+    ranges = results;
 }
 
-
-
-
+result = ranges.Min(x => x.Start);
 
 Console.WriteLine($"Part Two answear: {result}");
