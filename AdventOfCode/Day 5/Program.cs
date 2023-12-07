@@ -69,6 +69,22 @@ Console.WriteLine($"Part One answear: {result}");
 
 // Part Two
 
-result = ulong.MaxValue;
+List<Day_5.Range> ranges = new List<Day_5.Range>();
+for (int i = 0; i < seeds.Count; i += 2)
+{
+    ranges.Add(new Day_5.Range(seeds[i], seeds[i] + seeds[i + 1] - 1));
+}
+
+int currentCategory = 0;
+while (currentCategory != destinationCategory) 
+{
+    var map = maps.Find(x => x.SourceCategory == currentCategory);
+    var k = map.GetRanges(ranges[0]);
+    currentCategory = map.DestinationCategory;
+}
+
+
+
+
 
 Console.WriteLine($"Part Two answear: {result}");

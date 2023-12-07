@@ -16,5 +16,17 @@ namespace Day_5
         {
             return number >= SourceRangeStart && number < SourceRangeStart + RangeLength;
         }
+        public bool Intersects(Range range) 
+        {
+            return range.Start <= (SourceRangeStart + RangeLength) && SourceRangeStart <= range.End;
+        }
+        public bool Includes(Range range) 
+        {
+            return SourceRangeStart <= range.Start && range.End <= SourceRangeStart + RangeLength;
+        }
+        public Range MapRange(Range range) 
+        {
+            return new Range(MapNumber(range.Start), MapNumber(range.End));    
+        }
     }
 }

@@ -17,5 +17,21 @@ namespace Day_5
             }
             return number;
         }
+        public List<Range> GetRanges(Range range) 
+        {
+            List<Range> ranges = new List<Range>();
+            foreach(var mapping in Mappings)
+            {
+                if (mapping.Includes(range))
+                {
+                    ranges.Add(mapping.MapRange(range));
+                }
+                else if (mapping.Intersects(range))
+                {
+
+                }
+            }
+            return ranges;
+        }
     }
 }
