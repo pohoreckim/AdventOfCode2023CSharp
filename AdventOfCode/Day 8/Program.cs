@@ -83,23 +83,6 @@ foreach(var cn in currentNodes)
     cycles.Add(GetCycleInfo(stops));
 }
 
-for (int i = 0; i < cycles.Count; i++)
-{
-    string s = "";
-    for (int j = 0; j < cycles.Count; j++)
-    {
-        s += " " + (cycles[i].len % cycles[j].len).ToString();
-    }
-    Console.WriteLine(s);
-}
-
 ulong res = cycles.Select(x => (ulong)x.len).Aggregate((x, y) => LCM(x, y));
 
-/*while(navigation.MoveNext())
-{
-    currentNodes = currentNodes.Select(x => navigation.Current! == 'L' ? x.Left! : x.Right!).ToList();
-    result++;
-    if (currentNodes.All(x => x.Name.EndsWith('Z'))) break;
-}*/
-
-Console.WriteLine($"Part Two answear: {result}");
+Console.WriteLine($"Part Two answear: {res}");
