@@ -40,5 +40,66 @@ Console.WriteLine($"Part One answear: {result}");
 
 // Part Two
 
+bool ContainsCycle(List<int> stops)
+{
+    return stops.Count >= 3;
+}
+
+(int, int) GetCycleInfo(List<int> stops)
+{
+    return (stops[0], stops[2] - stops[1]);
+}
+ulong GCD(ulong a, ulong b)
+{
+    while(b != 0)
+    {
+        ulong t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+ulong LCM(ulong a, ulong b)
+{
+    return a / GCD(a, b) * b;
+}
+
+result = 0;
+List<Node> currentNodes = nodes.FindAll(x => x.Name.EndsWith('A'));
+List<(int start, int len)> cycles = new List<(int start, int len)>();
+foreach(var cn in currentNodes)
+{
+    List<int> stops = new List<int>();
+    navigation.Reset();
+    int steps = 0;
+    currentNode = cn;
+    while (navigation.MoveNext() && !ContainsCycle(stops))
+    {
+        currentNode = navigation.Current! == 'L' ? currentNode.Left! : currentNode.Right!;
+        steps++;
+        if (currentNode.Name.EndsWith('Z')) stops.Add(steps);
+    }
+    cycles.Add(GetCycleInfo(stops));
+}
+
+for (int i = 0; i < cycles.Count; i++)
+{
+    string s = "";
+    for (int j = 0; j < cycles.Count; j++)
+    {
+        s += " " + (cycles[i].len % cycles[j].len).ToString();
+    }
+    Console.WriteLine(s);
+}
+
+ulong res = cycles.Select(x => (ulong)x.len).Aggregate((x, y) => LCM(x, y));
+
+/*while(navigation.MoveNext())
+{
+    currentNodes = currentNodes.Select(x => navigation.Current! == 'L' ? x.Left! : x.Right!).ToList();
+    result++;
+    if (currentNodes.All(x => x.Name.EndsWith('Z'))) break;
+}*/
 
 Console.WriteLine($"Part Two answear: {result}");
