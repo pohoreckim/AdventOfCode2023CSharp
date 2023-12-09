@@ -1,5 +1,4 @@
 ﻿using Day_8;
-using System.Collections.Generic;
 using Utils;
 // Load input
 
@@ -26,6 +25,7 @@ foreach (var instruction in instructions)
 }
 
 // Part One
+
 (string start, string end) = ("AAA", "ZZZ");
 int result = 0;
 Node currentNode = nodes.Find(x => x.Name == "AAA")!;
