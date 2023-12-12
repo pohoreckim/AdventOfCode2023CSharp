@@ -5,7 +5,7 @@ using Utils;
 Point2D north = new Point2D(0, -1);
 Point2D south = new Point2D(0, 1);
 Point2D east = new Point2D(1, 0);
-Point2D west = new Point2D(-1, 0);   
+Point2D west = new Point2D(-1, 0);
 
 Dictionary<char, (Point2D end1, Point2D end2)> pipes = new Dictionary<char, (Point2D end1, Point2D end2)>
 {
@@ -33,7 +33,7 @@ for (int i = 0; i < possibleStarts.Count; i++)
     int counter = 1;
     Pipe current = possibleStarts[i];
     Point2D prev = pipeMaze.StartPosition;
-    while(true)
+    while (true)
     {
         pipeMaze.SetDistance(counter, current.Position);
         (Point2D nextPos, prev) = (current.ThroughPipe(prev), current.Position);
@@ -51,28 +51,19 @@ Console.WriteLine($"Part One answear: {result}");
 
 pipeMaze.SetChar('J', pipeMaze.StartPosition);
 string mazeSchematic = pipeMaze.ToString();
-Console.WriteLine(mazeSchematic);
-mazeSchematic = mazeSchematic.Replace("-", "").Replace("LJ","||").Replace("F7","||").Replace("L7","|").Replace("FJ","|");
-Console.WriteLine(mazeSchematic);
+mazeSchematic = mazeSchematic.Replace("-", "").Replace("LJ", "||").Replace("F7", "||").Replace("L7", "|").Replace("FJ", "|");
 
 result = 0;
-string tmp = "";
 foreach (var line in mazeSchematic.Split('\n').SkipLast(1))
 {
     char[] chars = line.ToCharArray();
     bool isInside = false;
     for (int i = 0; i < chars.Length; i++)
     {
-        if (chars[i] == PipeMaze.FreeTile && isInside)
-        { 
-            result++;
-            chars[i] = 'I';
-        }
+        if (chars[i] == PipeMaze.FreeTile && isInside) { result++; }
         if (chars[i] == '|') isInside = !isInside;
     }
-    tmp += new string(chars) + "\n";
-}
 
-Console.WriteLine(tmp);
+}
 
 Console.WriteLine($"Part Two answear: {result}");
