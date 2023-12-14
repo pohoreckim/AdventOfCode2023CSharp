@@ -30,11 +30,49 @@ namespace Day_11
                 _map[i] = chars;
             }
         }
-        public List<char> GetRow(int id)
+        private List<int> GetEmptyColumns()
+        {
+            List<int> emptyColumnsIds = new List<int>();
+            for (int i = 0; i < Width; i++)
+            {
+                if (GetColumn(i).All(x => x == EmptySpace)) emptyColumnsIds.Add(i);
+            }
+            return emptyColumnsIds;
+        }
+        private List<int> GetEmptyRows()
+        {
+            List<int> emptyRowsIds = new List<int>();
+            for (int i = 0; i < Height; i++)
+            {
+                if (GetRow(i).All(x => x == EmptySpace)) emptyRowsIds.Add(i);
+            }
+            return emptyRowsIds;
+        }
+        public ulong SumMinDistances(int emptySpaceMult)
+        {
+            List<int> emptyRows = GetEmptyRows();
+            List<int> emptyColumns = GetEmptyColumns();
+            ulong sum = 0;
+            for (int i = 0; i < Galaxies.Count; i++)
+            {
+                for (int j = i + 1; j < Galaxies.Count; j++)
+                {
+                    sum += Distance(i, j);
+                    sum += (ulong)(emptyRows.Where(y => y < Math.Max(Galaxies[i].Y, Galaxies[j].Y) && y > Math.Min(Galaxies[i].Y, Galaxies[j].Y)).Count() * (emptySpaceMult - 1));
+                    sum += (ulong)(emptyColumns.Where(x => x < Math.Max(Galaxies[i].X, Galaxies[j].X) && x > Math.Min(Galaxies[i].X, Galaxies[j].X)).Count() * (emptySpaceMult - 1));
+                }
+            }
+            return sum;
+        }
+        private ulong Distance(int firstGalaxyId,  int secondGalaxyId)
+        {
+            return (ulong)(Point2D.ManhattanDistance(Galaxies[firstGalaxyId], Galaxies[secondGalaxyId]));
+        }
+        private List<char> GetRow(int id)
         {
             return _map[id].ToList();
         }
-        public List<char> GetColumn(int id)
+        private List<char> GetColumn(int id)
         {
             List<char> result = new List<char>();
             for (int i = 0; i < Height; i++)
