@@ -20,80 +20,56 @@ namespace Day_12
             _goals = goals;
             PossibleSolutions = new List<string>();
         }
-        public static List<int> SpringsLengths(string springsString)
+        public ulong FindPossibleSolutions()
         {
-            int len = 0;
-            List<int> springsLen = new List<int>();
-            foreach (var springChar in springsString)
+            List<(int index, int goalIndex, int goalProgress, ulong mult)> queue = new List<(int index, int goalIndex, int goalProgress, ulong mult)>();
+            ulong result = 0;
+            queue.Add((0, 0, 0, 1));
+            while (queue.Count > 0)
             {
-                if (springChar == Damaged) len++;
-                else if (len > 0)
+                (int index, int goalIndex, int goalProgress, ulong mult) = queue[0];
+                queue.RemoveAt(0);
+                if (index >= _springs.Length)
                 {
-                    springsLen.Add(len);
-                    len = 0;
+                    result += goalIndex >= _goals.Count && goalProgress == 0 ? mult : 0UL;
+                    continue;
                 }
-            }
-            if (len > 0) springsLen.Add(len);
-            return springsLen;
-        }
-        public static bool IfListsAreEqual(List<int> firstList, List<int> secondList)
-        {
-            if (firstList.Count != secondList.Count) return false;
-            for (int i = 0; i < firstList.Count; i++)
-            {
-                if (firstList[i] != secondList[i]) return false;
-            }
-            return true;
-        }
-        public static List<int> ListElementWiseDiff(List<int> firstList, List<int> secondList)
-        {
-            List<int> result = new List<int>();
-            for (int i = 0; i < firstList.Count; i++)
-            {
-                int diff = i < secondList.Count ? firstList[i] - secondList[i] : firstList[i];
-                if(diff > 0) result.Add(diff);
-            }
-            return result;
-        }
-        public void FindPossibleSolutions()
-        {
-            Func("", 0);
-        }
-        private void Func(string currentString, int index)
-        {
-            if(currentString.Length == _springs.Length)
-            {
-                if(IfListsAreEqual(SpringsLengths(currentString), _goals)) PossibleSolutions.Add(currentString);
-            }
-            else
-            {
-                if (Heuristics(currentString))
+                if ((goalIndex >= _goals.Count && goalProgress > 0) || (goalIndex < _goals.Count && goalProgress > _goals[goalIndex])) continue;
+                List<char> nextMoves = _springs[index] == Unknown ? new List<char> { Damaged, Operational } : new List<char> { _springs[index] };
+                foreach (char move in nextMoves)
                 {
-                    if (_springs[index] == Unknown)
+                    (int, int, int, ulong) posSolution = (0, 0, 0, 1);
+                    if (move == Damaged)
                     {
-                        Func(currentString + Damaged, index + 1);
-                        Func(currentString + Operational, index + 1);
+                        posSolution = (index + 1, goalIndex, goalProgress + 1, mult);
                     }
                     else
                     {
-                        Func(currentString + _springs[index], index + 1);
+                        if (goalProgress > 0)
+                        {
+                            if (goalIndex < _goals.Count && _goals[goalIndex] == goalProgress)
+                            {
+                                posSolution = (index + 1, goalIndex + 1, 0, mult);
+                            }
+                            else
+                                continue;
+                        }
+                        else
+                        {
+                            posSolution = (index + 1, goalIndex, 0, mult);
+                        }
                     }
+                    int i = queue.FindIndex(x => x.index == posSolution.Item1 && x.goalIndex == posSolution.Item2 && x.goalProgress == posSolution.Item3);
+                    if (i != -1)
+                    {
+                        queue[i] = (posSolution.Item1, posSolution.Item2, posSolution.Item3, queue[i].mult + mult);
+                    }
+                    else
+                        queue.Add(posSolution);
                 }
             }
+            return result;
         }
-        private bool Heuristics(string s)
-        {
-            List<int> springLengths = SpringsLengths(s);
-            if(springLengths.Count > _goals.Count) return false;
-            for (int i = 0; i < springLengths.Count - 1; i++)
-            {
-                if (springLengths[i] != _goals[i]) return false;
-            }
-            List<int> elemDiff = ListElementWiseDiff(_goals, springLengths);
-            int required = elemDiff.Sum(x => x) + elemDiff.Count - 1;
-            int charsLeft = _springs.Length - s.Length;
-            if (charsLeft < required) return false;
-            return true;
-        }
+       
     }
 }

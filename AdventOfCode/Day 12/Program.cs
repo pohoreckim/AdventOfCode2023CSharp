@@ -11,9 +11,8 @@ foreach (var line in input.Split('\n').SkipLast(1))
 {
     var informations = line.Split(" ");
     List<int> lengths = informations[1].Split(",").Select(x => int.Parse(x)).ToList();
-    SpringsRow springsRow = new SpringsRow(informations[0], lengths);
-    springsRow.FindPossibleSolutions();
-    result += (ulong)springsRow.PossibleSolutions.Count;
+    SpringsRow springsRow = new SpringsRow(informations[0] + ".", lengths);
+    result += springsRow.FindPossibleSolutions();
 }
 
 Console.WriteLine($"Part One answear: {result}");
@@ -29,11 +28,10 @@ result = 0;
 foreach (var line in input.Split('\n').SkipLast(1))
 {
     var informations = line.Split(" ");
-    (informations[0], informations[1]) = (Repeat(informations[0], "?", 5), Repeat(informations[1], ",", 5));
+    (informations[0], informations[1]) = (Repeat(informations[0], "?", 5) + ".", Repeat(informations[1], ",", 5));
     List<int> lengths = informations[1].Split(",").Select(x => int.Parse(x)).ToList();
     SpringsRow springsRow = new SpringsRow(informations[0], lengths);
-    springsRow.FindPossibleSolutions();
-    result += (ulong)springsRow.PossibleSolutions.Count;
+    result += springsRow.FindPossibleSolutions();
 }
 
 Console.WriteLine($"Part Two answear: {result}");
