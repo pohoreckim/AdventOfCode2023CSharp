@@ -70,6 +70,5 @@ namespace Day_12
             }
             return result;
         }
-       
     }
 }
