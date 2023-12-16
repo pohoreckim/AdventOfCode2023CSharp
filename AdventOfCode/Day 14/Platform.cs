@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Day_14
 {
+    enum Direction
+    {
+        North, West, South, East
+    }
     internal class Platform
     {
         public const char RoundStone = 'O';
@@ -13,6 +17,7 @@ namespace Day_14
         public const char FreeSpace = '.';
         public int Width { get; private set; }
         public int Height { get; private set; }
+        public int Weight { get => Rocks.Select(x => Height - x.Y).Sum(); }
         private char[,] _board;
         public List<Point2D> Rocks { get; private set; }
         public Platform(string[] lines)
@@ -31,17 +36,22 @@ namespace Day_14
                 }
             }
         }
-        public void MoveStones(Point2D vector)
+        public int MoveStones(Point2D vector)
         {
+            int movedStonesCount = 0;
             for (int i = 0; i < Rocks.Count; i++)
             {
+                bool ifMoved = false;
                 while (CanMove(Rocks[i], vector))
                 {
                     Place(Rocks[i], FreeSpace);
+                    ifMoved = true;
                     Rocks[i] = Rocks[i] + vector;
                     Place(Rocks[i], RoundStone);
                 }
+                movedStonesCount += ifMoved ? 1 : 0;
             }
+            return movedStonesCount;
         }
         private bool CanMove(Point2D point, Point2D vector)
         {
@@ -69,6 +79,44 @@ namespace Day_14
                 result += '\n';
             }
             return result;
+        }
+        public int Cycle()
+        {
+            int movedStonesCount = 0;
+            List<Point2D> vectors = new List<Point2D>()
+            {
+                new Point2D(0, -1),
+                new Point2D(-1, 0),
+                new Point2D(0, 1),
+                new Point2D(1, 0)
+            };
+            List<Direction> directions = new List<Direction>() { Direction.North, Direction.West, Direction.South, Direction.East };
+            foreach (var item in vectors.Zip(directions))
+            {
+                Sort(item.Second);
+                movedStonesCount += MoveStones(item.First);
+            }
+            return movedStonesCount;
+        }
+        private void Sort(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.North:
+                    Rocks = Rocks.OrderBy(x => x.Y).ToList();
+                    break;
+                case Direction.West:
+                    Rocks = Rocks.OrderBy(x => x.X).ToList();
+                    break;
+                case Direction.South:
+                    Rocks = Rocks.OrderByDescending(x => x.Y).ToList();
+                    break;
+                case Direction.East:
+                    Rocks = Rocks.OrderByDescending(x => x.X).ToList();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
