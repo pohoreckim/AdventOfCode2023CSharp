@@ -5,7 +5,7 @@ string input = InputLoader.LoadInput();
 
 // Part One
 
-int result = 0;
+int result = input.Trim().Split(',').Select(x => x.ToCharArray().Aggregate(0, (a, b) => ((a + b) * 17) % 256)).Sum();
 
 Console.WriteLine($"Part One answear: {result}");
 
