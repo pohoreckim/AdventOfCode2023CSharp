@@ -32,6 +32,11 @@ namespace Day_16
                 }
             }
         }
+        public void Reset()
+        {
+            Visited.Clear();
+            _beams.Clear();
+        }
         public void Simulation()
         {
             while (_beams.Count > 0)
