@@ -38,7 +38,6 @@ namespace Day_17
             var neighbouring = GetAllNeighbours(start);
             PriorityQueue<Node, int> open = new();
             List<Node> initials = neighbouring.Select(x => new Node(start + x, x, 1)).ToList();
-            //Dictionary<Node, int> dist = new() { { initials[0], 0 }, { initials[1], 0 } };
             initials.ForEach(x => { dist.SetValue(x, GetValue(x.Position)); open.Enqueue(x, GetValue(x.Position)); });  
             while (open.Count > 0)
               {
@@ -53,10 +52,6 @@ namespace Day_17
                     if (newDist < dist.GetValue(neighbour))
                     {
                         dist.SetValue(neighbour, newDist);
-                        /*if (!open.UnorderedItems.Any(x => x.Element == neighbour))
-                        {
-                            open.Enqueue(neighbour, newDist);
-                        }*/
                         open.Enqueue(neighbour, newDist);
                     }
                 }
