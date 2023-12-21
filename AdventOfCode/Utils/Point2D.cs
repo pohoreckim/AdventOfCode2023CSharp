@@ -19,14 +19,12 @@ namespace Utils
         public static bool operator !=(Point2D a, Point2D b) => !(a == b);
         public static Point2D operator +(Point2D a, Point2D b) => new Point2D(a.X + b.X, a.Y + b.Y);
         public static int ManhattanDistance(Point2D left, Point2D right) => Math.Abs(left.X - right.X) + Math.Abs(left.Y - right.Y);
-
         public override bool Equals(object? obj)
         {
             return obj is Point2D d &&
                    X == d.X &&
                    Y == d.Y;
         }
-
         public override int GetHashCode()
         {
             return HashCode.Combine(X, Y);
