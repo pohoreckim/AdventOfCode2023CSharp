@@ -16,12 +16,12 @@ namespace Day_17
         public int Width { get; private set; }
         public int Height { get; private set; }
         public int GetValue(Point2D point) { return _heatLoss[point.Y, point.X]; }
-        public int MaxInLine { get; private set; }
-        public Map(string[] lines, int maxInLine)
+        public (int Min, int Max) Bounds{ get; private set; }
+        public Map(string[] lines, (int, int) bounds)
         {
             Height = lines.Length;
             Width = lines[0].Length;
-            MaxInLine = maxInLine;
+            Bounds = bounds;
             _heatLoss = new int[Height, Width];
             for (int i = 0; i < Height; i++)
             {
@@ -34,26 +34,30 @@ namespace Day_17
         }
         public int AStar(Point2D start, Point2D end)
         {
-            Node initial = new Node(start, new Point2D(1, 0), 0);
+            CostArray dist = new CostArray(Width, Height, Bounds.Max);
+            var neighbouring = GetAllNeighbours(start);
             PriorityQueue<Node, int> open = new();
-            Dictionary<Node, int> dist = new() { { initial, 0 } };
-            open.Enqueue(initial, 0);
+            List<Node> initials = neighbouring.Select(x => new Node(start + x, x, 1)).ToList();
+            //Dictionary<Node, int> dist = new() { { initials[0], 0 }, { initials[1], 0 } };
+            initials.ForEach(x => { dist.SetValue(x, GetValue(x.Position)); open.Enqueue(x, GetValue(x.Position)); });  
             while (open.Count > 0)
-            {
+              {
                 Node currentNode = open.Dequeue();
-                if(currentNode.Position == end)
+                if(currentNode.Position == end && currentNode.CurrentLength >= Bounds.Min)
                 {
-                    return dist[currentNode];
+                    return dist.GetValue(currentNode);
                 }
                 foreach (var neighbour in GetNeighbours(currentNode))
                 {
-                    int newDist = dist[currentNode] + GetValue(neighbour.Position);
-                    if (newDist < (dist.ContainsKey(neighbour) ? dist[neighbour] : int.MaxValue / 2))
+                    int newDist = dist.GetValue(currentNode) + GetValue(neighbour.Position);
+                    if (newDist < dist.GetValue(neighbour))
                     {
-                        dist[neighbour] = newDist;
-                        
+                        dist.SetValue(neighbour, newDist);
+                        /*if (!open.UnorderedItems.Any(x => x.Element == neighbour))
+                        {
                             open.Enqueue(neighbour, newDist);
-                        
+                        }*/
+                        open.Enqueue(neighbour, newDist);
                     }
                 }
             }
@@ -62,15 +66,29 @@ namespace Day_17
         private List<Node> GetNeighbours(Node node)
         {
             List<Node> result = new List<Node>();
-            if (node.CurrentLength < MaxInLine) result.Add(new Node(node.Position + node.Direction, node.Direction, node.CurrentLength + 1));
-            List<Point2D> points = node.Direction.X == 0 ?
-                new List<Point2D> { new Point2D(1, 0), new Point2D(-1, 0) } :
-                new List<Point2D> { new Point2D(0, 1), new Point2D(0, -1) };
-            foreach (var point in points)
+            if (node.CurrentLength < Bounds.Max) result.Add(new Node(node.Position + node.Direction, node.Direction, node.CurrentLength + 1));
+            if (node.CurrentLength >= Bounds.Min)
             {
-                result.Add(new Node(node.Position + point, point, 1));
+                List<Point2D> points = node.Direction.X == 0 ?
+                    new List<Point2D> { new Point2D(1, 0), new Point2D(-1, 0) } :
+                    new List<Point2D> { new Point2D(0, 1), new Point2D(0, -1) };
+                foreach (var point in points)
+                {
+                    result.Add(new Node(node.Position + point, point, 1));
+                }
             }
             return result.Where(x => InBounds(x.Position)).ToList();
+        }
+        private List<Point2D> GetAllNeighbours(Point2D point)
+        {
+            List<Point2D> aspiringPositions = new List<Point2D>()
+            {
+                point + new Point2D(1,0),
+                point + new Point2D(0,1),
+                point + new Point2D(-1,0),
+                point + new Point2D(0,-1)
+            };
+            return aspiringPositions.Where(x => InBounds(x)).ToList();
         }
         private bool InBounds(Point2D p) => p.X >= 0 && p.Y >= 0 && p.X < Width && p.Y < Height; 
     }

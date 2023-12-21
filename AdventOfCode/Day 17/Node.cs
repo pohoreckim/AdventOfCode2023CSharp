@@ -18,5 +18,7 @@ namespace Day_17
             Direction = direction;
             CurrentLength = len;
         }
+        public static bool operator ==(Node left, Node right) => left.Direction == right.Direction && left.Position == right.Position && left.CurrentLength == right.CurrentLength;
+        public static bool operator !=(Node left, Node right) => !(left == right);
     }
 }
